@@ -1,0 +1,25 @@
+extends:
+  import: kubernetes
+  file: gradle/pipeline.yaml
+agent:
+  image: openjdk:13
+pipelines:
+  overrides:
+    - stage: build
+      name: gradle-build
+      type: replace
+      steps:
+        - name: gradle-build
+          command: ./gradlew clean build -Pprod
+    - stage: build
+      name: post-build
+      type: replace
+      steps:
+        - name: post-build
+          command: echo disabling post build since it uses jx without the correct image
+    - stage: postBuild
+      name: post-build
+      type: replace
+      steps:
+        - name: post-build
+          command: echo disabling post build since it uses jx without the correct image

@@ -1,0 +1,22 @@
+extends:
+  file: ../gradle/pipeline.yaml
+pipelines:
+  overrides:
+    - stage: build 
+      name: gradle-build
+      type: replace
+      steps:
+        - name: gradle-build
+          command: ./gradlew clean build -Pprod -PnodeInstall
+  pullRequest:
+      promote:
+        steps:
+          - name: e2e-tests
+            agent:
+              image: elhoutico/npm-protractor
+            environment:
+              - name: JHI_E2E_HEADLESS
+                value: true
+              - name: JHI_E2E_URL
+                value:  http://$REPO_NAME-jx-$REPO_OWNER-$REPO_NAME-$BRANCH_NAME.$DOMAIN
+            command: ./node_modules/protractor/bin/webdriver-manager update && npm run e2e
